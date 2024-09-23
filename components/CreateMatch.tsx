@@ -17,12 +17,19 @@ import {
     SelectTrigger,
     SelectValue,
   } from "@/components/ui/select"
+import { useRouter } from "next/navigation";
 
 interface CreateMatchProps {
   closeModal: () => void;
 }
 
 export function CreateMatch({ closeModal }: CreateMatchProps) {
+  const router = useRouter();
+
+  const handleCreateMatch = () => {
+    router.push("/match")
+  }
+
   return (
     <Card className="w-[350px] bg-gradient-to-b from-[#12003b] to-[#38006b] shadow-lg">
       <CardHeader>
@@ -33,9 +40,9 @@ export function CreateMatch({ closeModal }: CreateMatchProps) {
         <form>
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="framework">Framework</Label>
+              <Label htmlFor="friend">Amigos</Label>
               <Select>
-                <SelectTrigger id="framework">
+                <SelectTrigger id="friend">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
                 <SelectContent position="popper">
@@ -53,7 +60,7 @@ export function CreateMatch({ closeModal }: CreateMatchProps) {
         <Button variant="outline" onClick={closeModal}>
           Cancelar
         </Button>
-        <Button>Crear Partida</Button>
+        <Button onClick={handleCreateMatch}>Crear Partida</Button>
       </CardFooter>
     </Card>
   );

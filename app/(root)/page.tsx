@@ -1,10 +1,12 @@
 "use client"
 import { AddFriend } from "@/components/AddFriend";
 import { CreateMatch } from "@/components/CreateMatch";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { GET_USER_INFO } from "@/constants";
 import { apiClient } from "@/lib/api-client";
 import { useAppStore } from "@/store";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -59,18 +61,26 @@ export default function Home() {
   };
 
   return (
-    <section className="relative flex min-h-screen w-full bg-gradient-to-r from-[#300d66] to-[#fc466b] text-white">
+    <section className="relative flex min-h-screen w-full text-white">
       {/* Sidebar - Menu */}
-      <div className="w-1/4 min-h-screen p-8 bg-gradient-to-b from-[#12003b] to-[#38006b] shadow-lg flex flex-col items-start">
-        <h1 className="text-3xl lg:text-5xl font-bold mb-10 tracking-wide text-[#ff77e9]">
-          Preguntados - PACS
-        </h1>
-        <Button onClick={handleCrateMatch} className="mb-6 w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
-          Crear Partida
-        </Button>
-        <Button onClick={handleAddFriend} className="w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
-          Añadir Amigo
-        </Button>
+      <div className="w-1/4 min-h-screen p-8 bg-gradient-to-b from-[#12003b] to-[#38006b] shadow-lg flex flex-col justify-between">
+        <div className="flex flex-col items-start">
+          <h1 className="text-3xl lg:text-5xl font-bold mb-10 tracking-wide text-[#ff77e9]">
+            Preguntados - PACS
+          </h1>
+          <Button onClick={handleCrateMatch} className="mb-6 w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
+            Crear Partida
+          </Button>
+          <Button onClick={handleAddFriend} className="w-full mb-6 text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
+            Añadir Amigo
+          </Button>
+          <Link href="/ongoingMatches" className="w-full mb-6">
+            <Button className="w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
+            Partidas en curso
+            </Button>
+          </Link>
+        </div>
+        <Footer user={userInfo} setUserInfo={setUserInfo} className="mt-auto" />
       </div>
 
       {/* Main content */}
@@ -112,4 +122,3 @@ export default function Home() {
     </section>
   );
 }
-
