@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { AddFriend } from "@/components/AddFriend";
 import { CreateMatch } from "@/components/CreateMatch";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,6 @@ export default function Home() {
         } else {
           setUserInfo(undefined);
         }
-        console.log({ response });
       } catch (error) {
         console.log(error);
         setUserInfo(undefined);
@@ -35,8 +34,6 @@ export default function Home() {
     };
     if (!userInfo) {
       getUserData();
-    } else {
-      setLoading(false);
     }
   }, [userInfo, setUserInfo]);
 
@@ -46,7 +43,7 @@ export default function Home() {
     setOpenAFModal(true);
   };
 
-  const handleCrateMatch = () => {
+  const handleCreateMatch = () => {
     setOpenCMModal(true);
   };
 
@@ -60,12 +57,11 @@ export default function Home() {
 
   return (
     <section className="relative flex min-h-screen w-full bg-gradient-to-r from-[#300d66] to-[#fc466b] text-white">
-      {/* Sidebar - Menu */}
       <div className="w-1/4 min-h-screen p-8 bg-gradient-to-b from-[#12003b] to-[#38006b] shadow-lg flex flex-col items-start">
         <h1 className="text-3xl lg:text-5xl font-bold mb-10 tracking-wide text-[#ff77e9]">
           Preguntados - PACS
         </h1>
-        <Button onClick={handleCrateMatch} className="mb-6 w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
+        <Button onClick={handleCreateMatch} className="mb-6 w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
           Crear Partida
         </Button>
         <Button onClick={handleAddFriend} className="w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
@@ -73,7 +69,6 @@ export default function Home() {
         </Button>
       </div>
 
-      {/* Main content */}
       <div className="flex-1 flex justify-center items-start p-10">
         <div className="w-full max-w-2xl bg-[#240055] p-6 rounded-lg shadow-md">
           <h2 className="text-3xl mb-4">Amigos Conectados</h2>
@@ -92,7 +87,6 @@ export default function Home() {
             </tbody>
           </table>
 
-          {/* Modal logic */}
           {openAFModal && (
             <div className="modal-backdrop fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
               <div className="modal-container">
@@ -112,4 +106,3 @@ export default function Home() {
     </section>
   );
 }
-
