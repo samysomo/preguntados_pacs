@@ -11,7 +11,7 @@ import { apiClient } from '@/lib/api-client';
 import { GET_NEXT_QUESTION_ROUTE } from '@/constants';
 
 // Define el tipo de las opciones de respuesta
-interface Answer {
+export interface Answer {
     text: string;
     isCorrect: boolean;
 }
@@ -20,6 +20,7 @@ interface Answer {
 interface Question {
     questionText: string;
     options: Answer[];
+    _id: string;
 }
 
 const QuestionComponent = () => {
@@ -34,6 +35,7 @@ const QuestionComponent = () => {
     const [question, setQuestion] = useState<Question | null>(null); // Cambiar null al tipo Question
     const [loading, setLoading] = useState(true); // Estado de carga
     const [error, setError] = useState<string | null>(null);
+    const [isDecisive, setIsDecisive] = useState<boolean>(false); 
 
     useEffect(() => {
         const fetchNextQuestion = async () => {
@@ -51,7 +53,8 @@ const QuestionComponent = () => {
 
                     if (response.data) {
                         setQuestion(response.data.question); // Solo actualiza si hay datos
-                        setQuestionData(response.data); // Actualiza el estado global
+                        setIsDecisive(response.data.decisive || false); // Verificar si la pregunta es decisiva
+                        setQuestionData(response.data);
                     } else {
                         setError('No question data found');
                     }
@@ -70,9 +73,24 @@ const QuestionComponent = () => {
         }
     }, [category, matchId, setQuestionData]); // Dependencias para ejecutar el efecto
 
-    const handleSelectAnswer = (answer: Answer) => {
+    const handleSelectAnswer = async (answer: Answer) => {
         setChosenAnswer(answer);
-        // Aquí puedes enviar la respuesta al backend
+        // Aquí envías la respuesta al backend
+        try {
+            await apiClient.post(
+                '/api/matches/submit-answer',
+                {
+                    matchId,
+                    questionId: question?._id,
+                    isCorrect: answer.isCorrect,
+                    isDecisive, // Indica si es decisiva
+                },
+                { withCredentials: true }
+            );
+            // Maneja la respuesta del servidor según sea necesario
+        } catch (error) {
+            console.error('Error submitting answer', error);
+        }
     };
 
     if (loading) {
@@ -121,6 +139,7 @@ const QuestionComponent = () => {
                     <Result
                         right={chosenAnswer?.isCorrect}
                         setChosenAnswer={setChosenAnswer}
+                        isDecisive={isDecisive} // Pasar si es decisiva
                     />
                 )}
             </div>
