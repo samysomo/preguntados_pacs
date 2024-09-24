@@ -17,11 +17,23 @@ import { apiClient } from '@/lib/api-client';
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from '@/constants';
 import { useAppStore } from '@/store';
 import { Loader2 } from 'lucide-react';
+import { useEffect } from 'react';
 
 const AuthForm = ({ type }: { type: string }) => {
   const router = useRouter();
   const {userInfo, setUserInfo } = useAppStore();
-  if(userInfo) router.push("/");
+  
+  // Utiliza useEffect para la redirección después de que el componente haya sido renderizado.
+  useEffect(() => {
+    const handleRedirect = () => {
+      if (userInfo) {
+        router.push("/");
+      }
+    };
+  
+    handleRedirect();
+  }, [userInfo, router]);
+
   const formSchema = authFormSchema(type);
 
   // 1. Define your form.
@@ -43,11 +55,10 @@ const AuthForm = ({ type }: { type: string }) => {
           { email, password, username },
           { withCredentials: true }
         );
-        setUserInfo(response.data.user);
-        console.log(response);
-        router.push('/');
+        setUserInfo(response.data.user); // Actualiza el estado global
+        router.push('/'); // Redirige
       }
-
+  
       if (type === 'sign-in') {
         const { email, password } = data;
         const response = await apiClient.post(
@@ -55,14 +66,14 @@ const AuthForm = ({ type }: { type: string }) => {
           { email, password },
           { withCredentials: true }
         );
-        console.log(response);
-        setUserInfo(response.data.user);
-        router.push('/');
+        setUserInfo(response.data.user); // Actualiza el estado global
+        router.push('/'); // Redirige
       }
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   return (
     <section className="w-full max-w-md mx-auto mt-16 p-8 bg-gradient-to-b from-[#2a0052] to-[#7200c3] rounded-lg shadow-lg text-white">
