@@ -11,35 +11,65 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
+  interface Friend {
+    _id: string;
+    username: string;
+  }
+
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Comienza como true
   const { userInfo, setUserInfo } = useAppStore();
   const [openAFModal, setOpenAFModal] = useState(false);
   const [openCMModal, setOpenCMModal] = useState(false);
+  const [friends, setFriends] = useState<Friend[]>([]);
 
-  useEffect(() => {
-    const getUserData = async () => {
-      try {
-        setLoading(true);
-        const response = await apiClient.get(GET_USER_INFO, { withCredentials: true });
-        if (response.status === 200 && response.data.id) {
-          setUserInfo(response.data);
+  // Función para obtener datos del usuario
+  const getUserData = async () => {
+    try {
+      const response = await apiClient.get(GET_USER_INFO, { withCredentials: true });
+      console.log("Response from GET_USER_INFO:", response.data);
+
+      if (response.status === 200) {
+        if (response.data.user && response.data.user.id) {
+          setUserInfo(response.data.user);
+          setFriends(response.data.user.friends || []);
         } else {
+          console.warn("User data does not contain an ID:", response.data.user);
           setUserInfo(undefined);
         }
-      } catch (error) {
-        console.log(error);
+      } else {
+        console.error("Unexpected response status:", response.status);
         setUserInfo(undefined);
-      } finally {
-        setLoading(false);
       }
-    };
-    if (!userInfo) {
-      getUserData();
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      setUserInfo(undefined);
+    } finally {
+      setLoading(false); // Finaliza la carga aquí
     }
-  }, [userInfo, setUserInfo]);
+  };
 
-  if (!userInfo) router.push("/sign-in");
+  useEffect(() => {
+    // Verifica la existencia del token en las cookies
+    const token = document.cookie.split('; ').find(row => row.startsWith('jwt='));
+
+    // Si el token está presente y no hay userInfo, llama a getUserData
+    if (token) {
+      getUserData();
+    } else {
+      setLoading(false); // Si no hay token, no es necesario cargar de nuevo
+    }
+  }, [setUserInfo]);
+
+  // Use a separate useEffect for redirección
+  useEffect(() => {
+    if (loading) return; // Evitar redirección mientras se está cargando
+
+    if (!userInfo) {
+      console.log("Redirecting to sign-in page."); // Log de redirección
+      router.push("/sign-in");
+    }
+  }, [loading, userInfo, router]);
 
   const handleAddFriend = () => {
     setOpenAFModal(true);
@@ -73,7 +103,7 @@ export default function Home() {
           </Button>
           <Link href="/ongoingMatches" className="w-full mb-6">
             <Button className="w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
-            Partidas en curso
+              Partidas en curso
             </Button>
           </Link>
         </div>
@@ -87,14 +117,22 @@ export default function Home() {
             <thead>
               <tr className="border-b border-[#ff77e9]">
                 <th className="p-2">Nombre</th>
-                <th className="p-2">Estado</th>
+                <th className="p-2">ID</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="p-2 text-[#ff77e9]">-</td>
-                <td className="p-2 text-[#ff77e9]">-</td>
-              </tr>
+              {friends.length > 0 ? (
+                friends.map((friend, index) => (
+                  <tr key={index}>
+                    <td className="p-2 text-[#ff77e9]">{friend.username}</td>
+                    <td className="p-2 text-[#ff77e9]">{friend._id}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td className="p-2 text-[#ff77e9]">-</td>
+                </tr>
+              )}
             </tbody>
           </table>
 
@@ -108,7 +146,7 @@ export default function Home() {
           {openCMModal && (
             <div className="modal-backdrop fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
               <div className="modal-container">
-                <CreateMatch closeModal={closeCMModal} />
+                <CreateMatch closeModal={closeCMModal} friends={friends} />
               </div>
             </div>
           )}
