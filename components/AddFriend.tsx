@@ -58,7 +58,7 @@ export function AddFriend({ closeModal }: AddFriendProps) {
               />
             </div>
           </div>
-          <CardFooter className="flex justify-between">
+          <CardFooter className="flex justify-around mt-10">
             <Button variant="outline" onClick={closeModal}>
               Cancelar
             </Button>

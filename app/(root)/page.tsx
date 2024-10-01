@@ -92,18 +92,18 @@ export default function Home() {
       {/* Sidebar - Menu */}
       <div className="w-1/4 min-h-screen p-8 bg-gradient-to-b from-[#12003b] to-[#38006b] shadow-lg flex flex-col justify-between">
         <div className="flex flex-col items-start">
-          <h1 className="text-3xl lg:text-5xl font-bold mb-10 tracking-wide text-[#ff77e9]">
-            Preguntados - PACS
+          <h1 className="text-4xl lg:text-3xl font-bold mb-10 tracking-wide text-[#ff77e9]">
+            <span className="max-lg:hidden mr-1">Preguntados - </span>PACS
           </h1>
           <Button onClick={handleCreateMatch} className="mb-6 w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
-            Crear Partida
+            Crear <span className="max-lg:hidden ml-1">Partida</span>
           </Button>
           <Button onClick={handleAddFriend} className="w-full mb-6 text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
-            Añadir Amigo
+            Añadir <span className="max-lg:hidden ml-1">Amigo</span>
           </Button>
           <Link href="/ongoingMatches" className="w-full mb-6">
             <Button className="w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
-              Partidas en curso
+              Partidas <span className="max-lg:hidden ml-1">en Curso</span>
             </Button>
           </Link>
         </div>
