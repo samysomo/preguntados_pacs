@@ -12,7 +12,8 @@ const Roulette = () => {
     { id: 3, name: "pruebas_de_ntegracion", color: "#d63e92" },
     { id: 4, name: "pruebas_funcionales", color: "#daa520" },
     { id: 5, name: "pruebas_end_to_end", color: "#ff340f" },
-    { id: 6, name: "pruebas_de_aceptacion", color: "#3cb371" }
+    { id: 6, name: "pruebas_de_aceptacion", color: "#3cb371" },
+    { id: 7, name: "corona", color: "#ecff00" }
   ];
 
   const [rotationValue, setRotationValue] = useState(0);

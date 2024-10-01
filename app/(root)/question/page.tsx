@@ -8,15 +8,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store'; // Asegúrate de importar tu store
 import { apiClient } from '@/lib/api-client';
-import { GET_NEXT_QUESTION_ROUTE } from '@/constants';
+import { GET_NEXT_QUESTION_ROUTE, SUBMIT_ANSWER_ROUTE } from '@/constants';
 
-// Define el tipo de las opciones de respuesta
 export interface Answer {
     text: string;
     isCorrect: boolean;
 }
 
-// Define el tipo de la pregunta
 interface Question {
     questionText: string;
     options: Answer[];
@@ -31,29 +29,35 @@ const QuestionComponent = () => {
         setQuestionData: state.setQuestionData, // Método para establecer la pregunta
     }));
 
-    const [chosenAnswer, setChosenAnswer] = useState<Answer | null>(null); // Define el tipo de chosenAnswer como Answer o null
-    const [question, setQuestion] = useState<Question | null>(null); // Cambiar null al tipo Question
-    const [loading, setLoading] = useState(true); // Estado de carga
+    const [chosenAnswer, setChosenAnswer] = useState<Answer | null>(null);
+    const [question, setQuestion] = useState<Question | null>(null);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isDecisive, setIsDecisive] = useState<boolean>(false); 
 
     useEffect(() => {
         const fetchNextQuestion = async () => {
-            
             if (matchId) {
                 setLoading(true);
-                setError(null); // Resetea el error antes de la solicitud
+                setError(null);
+
+                // Verificar si la categoría es 'corona'
+                if (category === 'corona') {
+                    // Manejar el caso especial si la categoría es 'corona'
+                    setIsDecisive(true); // Saltar a la pregunta decisiva
+                    //setLoading(false);    // Finalizar la carga
+                }
 
                 try {
                     const response = await apiClient.post(
                         `${GET_NEXT_QUESTION_ROUTE}${matchId}/next-question`,
-                        { selectedTheme: category }, // Enviar el selectedTheme en el cuerpo
-                        { withCredentials: true } // Incluye las credenciales
+                        { selectedTheme: category }, 
+                        { withCredentials: true }
                     );
 
                     if (response.data) {
-                        setQuestion(response.data.question); // Solo actualiza si hay datos
-                        setIsDecisive(response.data.decisive || false); // Verificar si la pregunta es decisiva
+                        setQuestion(response.data.question);
+                        setIsDecisive(response.data.decisive || false); 
                         setQuestionData(response.data);
                     } else {
                         setError('No question data found');
@@ -66,44 +70,43 @@ const QuestionComponent = () => {
             }
         };
 
-        if (category) { // Llamar a la API solo si hay una categoría
+        if (category) {
             fetchNextQuestion();
         } else {
             setLoading(false);
         }
-    }, [category, matchId, setQuestionData]); // Dependencias para ejecutar el efecto
+    }, [category, matchId, setQuestionData]);
 
     const handleSelectAnswer = async (answer: Answer) => {
         setChosenAnswer(answer);
         // Aquí envías la respuesta al backend
         try {
             await apiClient.post(
-                '/api/matches/submit-answer',
+                SUBMIT_ANSWER_ROUTE + matchId + '/answer',
                 {
                     matchId,
                     questionId: question?._id,
                     isCorrect: answer.isCorrect,
-                    isDecisive, // Indica si es decisiva
+                    isDecisive, 
                 },
                 { withCredentials: true }
             );
-            // Maneja la respuesta del servidor según sea necesario
         } catch (error) {
             console.error('Error submitting answer', error);
         }
     };
 
     if (loading) {
-        return <p>Cargando...</p>; // Muestra un mensaje de carga
+        return <p>Cargando...</p>;
     }
 
     if (error) {
-        return <p>Error: {error}</p>; // Muestra un mensaje de error
+        return <p>Error: {error}</p>;
     }
 
-    if (!question) {
+    if (!question && !isDecisive) {
         console.warn('No se encontró ninguna pregunta');
-        return <p>No question found</p>; // Maneja el caso donde no hay pregunta
+        return <p>No question found</p>;
     }
 
     return (
@@ -122,10 +125,10 @@ const QuestionComponent = () => {
                 <h2 className='text-white text-3xl font-bold'>Pruebas Orientadas a Objetos</h2>
             </header>
             <div className="w-full max-w-md mx-auto mt-28 p-8 bg-gradient-to-b from-[#2a0052] to-[#7200c3] rounded-lg shadow-lg text-white">
-                <h3 className='text-lg font-bold'>{question.questionText}</h3> {/* Muestra la pregunta */}
+                <h3 className='text-lg font-bold'>{question?.questionText}</h3> 
                 {!chosenAnswer ? (
                     <div className='flex flex-col gap-5 mt-8'>
-                        {question.options.map((answer) => (
+                        {question?.options.map((answer) => (
                             <Button
                                 key={answer.text}
                                 className="w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]"
@@ -139,7 +142,7 @@ const QuestionComponent = () => {
                     <Result
                         right={chosenAnswer?.isCorrect}
                         setChosenAnswer={setChosenAnswer}
-                        isDecisive={isDecisive} // Pasar si es decisiva
+                        isDecisive={isDecisive} 
                     />
                 )}
             </div>

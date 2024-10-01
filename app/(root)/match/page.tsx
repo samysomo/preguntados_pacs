@@ -72,26 +72,26 @@ const Match = () => {
                         />
                     </Link>
                 </div>
-                {matchData.players.map((player: any, index: number) => (
-                    <div
-                        key={player._id}
-                        className={`flex mt-10 p-5 justify-end bg-gradient-to-b from-[#12003b] to-[#38006b] w-full ${index % 2 === 0 ? 'rounded-r-2xl' : 'rounded-l-2xl'}`}
-                    >
-                        <div className='flex flex-col mr-3'>
-                            <h1 className='text-white'>{player.username}</h1>
-                            <p className='text-pink-500'>{player.email}</p>
-                        </div>
-                        <div className="footer_name">
-                            <p className='text-xl font-bold text-gray-700'>
-                                {player.username.charAt(0).toUpperCase()} {/* Inicial del jugador */}
-                            </p>
-                        </div>
-                        <div className="flex size-10 ml-28 items-center justify-center rounded-md bg-gray-200">
-                            <p className='text-xl font-bold text-gray-700'>
-                                {index + 1} {/* Número del jugador */}
-                            </p>
-                        </div>
+                {[matchData.players.player1, matchData.players.player2].map((player: any, index: number) => (
+                <div
+                    key={player._id}
+                    className={`flex mt-10 p-5 justify-end bg-gradient-to-b from-[#12003b] to-[#38006b] w-full ${index % 2 === 0 ? 'rounded-r-2xl' : 'rounded-l-2xl'}`}
+                >
+                    <div className='flex flex-col mr-3'>
+                    <h1 className='text-white'>{player.username}</h1>
+                    <p className='text-pink-500'>{player.email}</p>
                     </div>
+                    <div className="footer_name">
+                    <p className='text-xl font-bold text-gray-700'>
+                        {player.username.charAt(0).toUpperCase()} {/* Inicial del jugador */}
+                    </p>
+                    </div>
+                    <div className="flex size-10 ml-28 items-center justify-center rounded-md bg-gray-200">
+                    <p className='text-xl font-bold text-gray-700'>
+                        {index + 1} {/* Número del jugador */}
+                    </p>
+                    </div>
+                </div>
                 ))}
             </header>
             <Roulette />

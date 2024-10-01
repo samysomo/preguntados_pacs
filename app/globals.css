@@ -400,7 +400,7 @@
     width: 50%;
     height: 50%;
     transform-origin: bottom right;
-    transform: rotate(calc(60deg * var(--i)));
+    transform: rotate(calc(51deg * var(--i)));
     clip-path: polygon(0 0, 71% 0, 100% 100%, 0 71%);
     display: flex;
     justify-content: center;

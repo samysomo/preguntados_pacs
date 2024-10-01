@@ -13,3 +13,6 @@ export const MATCH_ROUTES = "api/matches";
 export const CREATE_MATCH_ROUTE = `${MATCH_ROUTES}/create`;
 export const GET_MATCH_ROUTE = `${MATCH_ROUTES}/`;
 export const GET_NEXT_QUESTION_ROUTE = `${MATCH_ROUTES}/`;
+export const SUBMIT_ANSWER_ROUTE = `${MATCH_ROUTES}/`;
+export const GET_ONGOING_MATCHES = `${MATCH_ROUTES}/ongoing`;
+export const GET_PLAYER_BY_ID = `${MATCH_ROUTES}/get-player`;
