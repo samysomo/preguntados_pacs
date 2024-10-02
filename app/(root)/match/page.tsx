@@ -3,21 +3,26 @@
 import Roulette from '@/components/Roulette';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '@/store'; // Importa el store de Zustand
 import { apiClient } from '@/lib/api-client';
 import { GET_MATCH_ROUTE } from '@/constants';
+import SelectedCategoryModal from '@/components/SelectCategoryModal';
 
 const Match = () => {
     // Usamos el store de Zustand al principio del componente
-    const { matchId, matchData, setMatchData } = useAppStore((state) => ({
+    const { matchId, matchData, setMatchData, category } = useAppStore((state) => ({
         matchId: state.matchId,
         matchData: state.matchData,
         setMatchData: state.setMatchData,
+        category: state.category
     }));
     
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
+
+    // Estado para abrir el modal cuando sale corona, si lo quieres ver sin que te tenga que salir corona en la ruleta solo ponle cambialo a true
+    const [selectCategoryModal, setSelectCategoryModal] = useState(false);
     
     useEffect(() => {
         const fetchMatchData = async () => {
@@ -46,6 +51,12 @@ const Match = () => {
         fetchMatchData();
     }, [matchId, setMatchData]);
 
+    useEffect(() => {
+        if(category === "corona"){
+            setSelectCategoryModal(true)
+        }
+    }, [category])
+
     if (loading) {
         return <p>Loading...</p>;
     }
@@ -73,29 +84,61 @@ const Match = () => {
                     </Link>
                 </div>
                 {[matchData.players.player1, matchData.players.player2].map((player: any, index: number) => (
-                <div
-                    key={player._id}
-                    className={`flex mt-10 p-5 justify-end bg-gradient-to-b from-[#12003b] to-[#38006b] w-full ${index % 2 === 0 ? 'rounded-r-2xl' : 'rounded-l-2xl'}`}
-                >
-                    <div className='flex flex-col mr-3'>
-                    <h1 className='text-white'>{player.username}</h1>
-                    <p className='text-pink-500'>{player.email}</p>
-                    </div>
-                    <div className="footer_name">
-                    <p className='text-xl font-bold text-gray-700'>
-                        {player.username.charAt(0).toUpperCase()} {/* Inicial del jugador */}
-                    </p>
-                    </div>
-                    <div className="flex size-10 ml-28 items-center justify-center rounded-md bg-gray-200">
-                    <p className='text-xl font-bold text-gray-700'>
-                        {index + 1} {/* Número del jugador */}
-                    </p>
-                    </div>
-                </div>
+                    index % 2 === 0 ? (
+                        <div
+                            key={player._id}
+                            className={`flex mt-10 p-5 justify-end bg-gradient-to-b from-[#12003b] to-[#38006b] w-full ${index % 2 === 0 ? 'rounded-r-2xl' : 'rounded-l-2xl'}`}
+                        >
+                            <div className='flex flex-col mr-3'>
+                                <h1 className='text-white text-end'>{player.username}</h1>
+                                <p className='text-pink-500'>{player.email}</p>
+                            </div>
+                            <div className="footer_name">
+                                <p className='text-xl font-bold text-gray-700'>
+                                    {player.username.charAt(0).toUpperCase()} {/* Inicial del jugador */}
+                                </p>
+                            </div>
+                            <div className="flex size-10 ml-28 items-center justify-center rounded-md bg-gray-200">
+                                <p className='text-xl font-bold text-gray-700'>
+                                    {index + 1} {/* Número del jugador */}
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div
+                            key={player._id}
+                            className={`flex mt-10 p-5 justify-start bg-gradient-to-b from-[#12003b] to-[#38006b] w-full ${index % 2 === 0 ? 'rounded-r-2xl' : 'rounded-l-2xl'}`}
+                        >
+                            <div className="flex size-10 mr-28 items-center justify-center rounded-md bg-gray-200">
+                                <p className='text-xl font-bold text-gray-700'>
+                                    {index + 1} {/* Número del jugador */}
+                                </p>
+                            </div>
+                            <div className="footer_name mr-3">
+                                <p className='text-xl font-bold text-gray-700'>
+                                    {player.username.charAt(0).toUpperCase()} {/* Inicial del jugador */}
+                                </p>
+                            </div>
+                            <div className='flex flex-col'>
+                                <h1 className='text-white'>{player.username}</h1>
+                                <p className='text-pink-500'>{player.email}</p>
+                            </div>
+                            
+                            
+                        </div>
+                    )
+                
                 ))}
 
             </header>
-            <Roulette />
+            {!selectCategoryModal && (
+                <Roulette />
+            )}
+            <SelectedCategoryModal
+                isOpen={selectCategoryModal}
+                setSelectCategoryModal={setSelectCategoryModal}
+            />
+            
         </section>
     );
 };
