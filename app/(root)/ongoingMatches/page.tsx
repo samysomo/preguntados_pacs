@@ -19,7 +19,10 @@ interface Match {
   theme: string; // Tema de la pregunta actual
   questionsAnswered: Array<{ questionId: string; isCorrect: boolean }>; // Array de preguntas contestadas con el estado de cada respuesta
   correctAnswersStreak: { player1: number; player2: number }; // Racha de respuestas correctas de los jugadores
-  completedThemes: { [theme: string]: boolean }; // Temas completados por los jugadores
+  completedThemes: {
+    player1: string[]; // Array de temas completados por el jugador 1
+    player2: string[]; // Array de temas completados por el jugador 2
+  }; 
   status: 'in-progress' | 'terminated'; // Estado de la partida
   __v: number; // Versión del documento en MongoDB
 }
@@ -74,12 +77,12 @@ const OngoingMatches = () => {
                 <div className="flex flex-col items-center">
                   <p className="text-xl font-bold text-gray-700">Tu</p>
                   <h3 className="text-lg">{match.players.player1.username}</h3>
-                  <p>{match.correctAnswersStreak.player1}</p> {/* Tu puntaje */}
+                  <p>{match.completedThemes.player1.length}</p> {/* Tu puntaje */}
                 </div>
                 <div className="flex flex-col items-center">
                 <p className="text-xl font-bold text-gray-700">Vs</p>
                   <h3 className="text-lg">{match.players.player2.username}</h3>
-                  <p>{match.correctAnswersStreak.player2}</p> {/* Puntaje del contrincante */}
+                  <p>{match.completedThemes.player2.length}</p> {/* Puntaje del contrincante */}
                 </div>
                 <Link href={`/match`} className="w-1/2">
                   <Button
