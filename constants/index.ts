@@ -17,3 +17,4 @@ export const SUBMIT_ANSWER_ROUTE = `${MATCH_ROUTES}/`;
 export const GET_ONGOING_MATCHES = `${MATCH_ROUTES}/ongoing`;
 export const GET_PLAYER_BY_ID = `${MATCH_ROUTES}/get-player`;
 export const CHECK_IF_DECISIVE_ROUTE = `${MATCH_ROUTES}/getstreak/`;
+export const GET_COMPLETED_THEMES = `${MATCH_ROUTES}/getcompletedthemes/`;

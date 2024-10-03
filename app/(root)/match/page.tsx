@@ -8,8 +8,12 @@ import { useAppStore } from '@/store';
 import { apiClient } from '@/lib/api-client';
 import { GET_MATCH_ROUTE, CHECK_IF_DECISIVE_ROUTE } from '@/constants';
 import SelectedCategoryModal from '@/components/SelectCategoryModal';
+import { useRouter } from "next/navigation";
 
 const Match = () => {
+
+    const router = useRouter();
+
     const { matchId, matchData, setMatchData, category } = useAppStore((state) => ({
       matchId: state.matchId,
       matchData: state.matchData,
@@ -33,6 +37,11 @@ const Match = () => {
 
                     if (response.data) {
                         setMatchData(response.data);
+
+                        if (response.data.status === 'completed') {
+                            alert('¡Ganaste!');
+                            router.push("/");
+                        }
                         
                         // Verificar si la próxima pregunta es decisiva
                         const decisiveResponse = await apiClient.get(CHECK_IF_DECISIVE_ROUTE + matchId, {

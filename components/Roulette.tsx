@@ -8,16 +8,7 @@ import { apiClient } from '@/lib/api-client';
 const Roulette = () => {
   const router = useRouter();
   const setCategory = useAppStore((state) => state.setCategory);
-  const categories = [
-    { id: 1, name: "corona", color: "#db7093" },
-    { id: 2, name: "corona", color: "#20b2aa" },
-    { id: 3, name: "corona", color: "#d63e92" },
-    { id: 4, name: "corona", color: "#daa520" },
-    { id: 5, name: "corona", color: "#ff340f" },
-    { id: 6, name: "corona", color: "#3cb371" },
-    { id: 7, name: "corona", color: "#ecff00" }
-  ];
-  /*
+  
   const categories = [
     { id: 1, name: "pruebas_unitarias", color: "#db7093" },
     { id: 2, name: "unitarias", color: "#20b2aa" },
@@ -26,7 +17,7 @@ const Roulette = () => {
     { id: 5, name: "pruebas_end_to_end", color: "#ff340f" },
     { id: 6, name: "pruebas_de_aceptacion", color: "#3cb371" },
     { id: 7, name: "corona", color: "#ecff00" }
-  ];*/
+  ];
 
   const [rotationValue, setRotationValue] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
