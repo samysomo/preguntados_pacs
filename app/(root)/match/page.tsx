@@ -110,7 +110,7 @@ const Match = () => {
                             </div>
                             <div className="flex size-10 ml-28 items-center justify-center rounded-md bg-gray-200">
                                 <p className='text-xl font-bold text-gray-700'>
-                                    {index + 1}
+                                    {matchData.completedThemes.player1.length}
                                 </p>
                             </div>
                         </div>
@@ -121,7 +121,7 @@ const Match = () => {
                         >
                             <div className="flex size-10 mr-28 items-center justify-center rounded-md bg-gray-200">
                                 <p className='text-xl font-bold text-gray-700'>
-                                    {index + 1}
+                                    {matchData.completedThemes.player2.length}
                                 </p>
                             </div>
                             <div className="footer_name mr-3">
