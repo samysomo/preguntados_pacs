@@ -4,26 +4,24 @@ import Roulette from '@/components/Roulette';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import { useAppStore } from '@/store'; // Importa el store de Zustand
+import { useAppStore } from '@/store';
 import { apiClient } from '@/lib/api-client';
-import { GET_MATCH_ROUTE } from '@/constants';
+import { GET_MATCH_ROUTE, CHECK_IF_DECISIVE_ROUTE } from '@/constants';
 import SelectedCategoryModal from '@/components/SelectCategoryModal';
 
 const Match = () => {
-    // Usamos el store de Zustand al principio del componente
     const { matchId, matchData, setMatchData, category } = useAppStore((state) => ({
-        matchId: state.matchId,
-        matchData: state.matchData,
-        setMatchData: state.setMatchData,
-        category: state.category
+      matchId: state.matchId,
+      matchData: state.matchData,
+      setMatchData: state.setMatchData,
+      category: state.category,
     }));
     
-    const [loading, setLoading] = React.useState(true);
-    const [error, setError] = React.useState<string | null>(null);
-
-    // Estado para abrir el modal cuando sale corona, si lo quieres ver sin que te tenga que salir corona en la ruleta solo ponle cambialo a true
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [selectCategoryModal, setSelectCategoryModal] = useState(false);
-    
+
+
     useEffect(() => {
         const fetchMatchData = async () => {
             if (matchId) {
@@ -32,9 +30,18 @@ const Match = () => {
                     const response = await apiClient.get(GET_MATCH_ROUTE + matchId, {
                         withCredentials: true,
                     });
-                    
+
                     if (response.data) {
-                        setMatchData(response.data); // Solo actualiza si hay datos
+                        setMatchData(response.data);
+                        
+                        // Verificar si la próxima pregunta es decisiva
+                        const decisiveResponse = await apiClient.get(CHECK_IF_DECISIVE_ROUTE + matchId, {
+                            withCredentials: true,
+                        });
+
+                        if (decisiveResponse.data.nextDecisive) {
+                            setSelectCategoryModal(true); // Abrir el modal de selección de categoría
+                        }
                     } else {
                         setError('No match data found');
                     }
@@ -50,12 +57,6 @@ const Match = () => {
 
         fetchMatchData();
     }, [matchId, setMatchData]);
-
-    useEffect(() => {
-        if(category === "corona"){
-            setSelectCategoryModal(true)
-        }
-    }, [category])
 
     if (loading) {
         return <p>Loading...</p>;
@@ -95,12 +96,12 @@ const Match = () => {
                             </div>
                             <div className="footer_name">
                                 <p className='text-xl font-bold text-gray-700'>
-                                    {player.username.charAt(0).toUpperCase()} {/* Inicial del jugador */}
+                                    {player.username.charAt(0).toUpperCase()}
                                 </p>
                             </div>
                             <div className="flex size-10 ml-28 items-center justify-center rounded-md bg-gray-200">
                                 <p className='text-xl font-bold text-gray-700'>
-                                    {index + 1} {/* Número del jugador */}
+                                    {index + 1}
                                 </p>
                             </div>
                         </div>
@@ -111,25 +112,21 @@ const Match = () => {
                         >
                             <div className="flex size-10 mr-28 items-center justify-center rounded-md bg-gray-200">
                                 <p className='text-xl font-bold text-gray-700'>
-                                    {index + 1} {/* Número del jugador */}
+                                    {index + 1}
                                 </p>
                             </div>
                             <div className="footer_name mr-3">
                                 <p className='text-xl font-bold text-gray-700'>
-                                    {player.username.charAt(0).toUpperCase()} {/* Inicial del jugador */}
+                                    {player.username.charAt(0).toUpperCase()}
                                 </p>
                             </div>
                             <div className='flex flex-col'>
                                 <h1 className='text-white'>{player.username}</h1>
                                 <p className='text-pink-500'>{player.email}</p>
                             </div>
-                            
-                            
                         </div>
                     )
-                
                 ))}
-
             </header>
             {!selectCategoryModal && (
                 <Roulette />
@@ -138,7 +135,6 @@ const Match = () => {
                 isOpen={selectCategoryModal}
                 setSelectCategoryModal={setSelectCategoryModal}
             />
-            
         </section>
     );
 };

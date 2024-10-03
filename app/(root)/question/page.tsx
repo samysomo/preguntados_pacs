@@ -23,9 +23,10 @@ interface Question {
 
 const QuestionComponent = () => {
     const router = useRouter();
-    const { category, matchId, setQuestionData } = useAppStore((state) => ({
+    const { category, matchId, isFinalQuestion, setQuestionData } = useAppStore((state) => ({
         category: state.category, // Obtener la categoría desde el store
-        matchId: state.matchId,   // Asumiendo que tienes el matchId en tu estado global
+        matchId: state.matchId,   // Obtener el matchId desde el store
+        isFinalQuestion: state.isFinalQuestion, // Obtener si es una pregunta decisiva desde el store
         setQuestionData: state.setQuestionData, // Método para establecer la pregunta
     }));
 
@@ -33,7 +34,6 @@ const QuestionComponent = () => {
     const [question, setQuestion] = useState<Question | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [isDecisive, setIsDecisive] = useState<boolean>(false); 
 
     useEffect(() => {
         const fetchNextQuestion = async () => {
@@ -41,23 +41,15 @@ const QuestionComponent = () => {
                 setLoading(true);
                 setError(null);
 
-                // Verificar si la categoría es 'corona'
-                if (category === 'corona') {
-                    // Manejar el caso especial si la categoría es 'corona'
-                    setIsDecisive(true); // Saltar a la pregunta decisiva
-                    //setLoading(false);    // Finalizar la carga
-                }
-
                 try {
                     const response = await apiClient.post(
                         `${GET_NEXT_QUESTION_ROUTE}${matchId}/next-question`,
-                        { selectedTheme: category }, 
+                        { selectedTheme: category, decisive: isFinalQuestion }, // Enviar si es pregunta decisiva
                         { withCredentials: true }
                     );
 
                     if (response.data) {
                         setQuestion(response.data.question);
-                        setIsDecisive(response.data.decisive || false); 
                         setQuestionData(response.data);
                     } else {
                         setError('No question data found');
@@ -75,7 +67,7 @@ const QuestionComponent = () => {
         } else {
             setLoading(false);
         }
-    }, [category, matchId, setQuestionData]);
+    }, [category, matchId, setQuestionData, isFinalQuestion]);
 
     const handleSelectAnswer = async (answer: Answer) => {
         setChosenAnswer(answer);
@@ -87,7 +79,7 @@ const QuestionComponent = () => {
                     matchId,
                     questionId: question?._id,
                     isCorrect: answer.isCorrect,
-                    isDecisive, 
+                    isDecisive: isFinalQuestion, // Enviar si es pregunta decisiva
                 },
                 { withCredentials: true }
             );
@@ -104,7 +96,7 @@ const QuestionComponent = () => {
         return <p>Error: {error}</p>;
     }
 
-    if (!question && !isDecisive) {
+    if (!question) {
         console.warn('No se encontró ninguna pregunta');
         return <p>No question found</p>;
     }
@@ -142,7 +134,7 @@ const QuestionComponent = () => {
                     <Result
                         right={chosenAnswer?.isCorrect}
                         setChosenAnswer={setChosenAnswer}
-                        isDecisive={isDecisive} 
+                        isDecisive={isFinalQuestion} // Pasar si es decisiva al componente Result
                     />
                 )}
             </div>
