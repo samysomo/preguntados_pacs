@@ -8,6 +8,7 @@ export const GET_USER_INFO = `${AUTH_ROUTES}/user-info`;
 export const USER_ROUTES = "api/users";
 export const ADD_FRIEND_ROUTE = `${USER_ROUTES}/add-friend`;
 export const GET_USER_FRIENDS = `${USER_ROUTES}/friends`;
+export const GET_USERS = `${USER_ROUTES}/get-users`;
 
 export const MATCH_ROUTES = "api/matches";
 export const CREATE_MATCH_ROUTE = `${MATCH_ROUTES}/create`;
