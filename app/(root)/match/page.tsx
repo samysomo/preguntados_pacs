@@ -9,6 +9,7 @@ import { apiClient } from '@/lib/api-client';
 import { GET_MATCH_ROUTE, CHECK_IF_DECISIVE_ROUTE } from '@/constants';
 import SelectedCategoryModal from '@/components/SelectCategoryModal';
 import { useRouter } from "next/navigation";
+import VictoryModal from '@/components/VictoryModal';
 
 const Match = () => {
 
@@ -24,7 +25,7 @@ const Match = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectCategoryModal, setSelectCategoryModal] = useState(false);
-
+    const [showVictoryModal, setShowVictoryModal] = useState(false);
 
     useEffect(() => {
         const fetchMatchData = async () => {
@@ -40,7 +41,7 @@ const Match = () => {
 
                         if (response.data.status === 'completed') {
                             alert('¡Ganaste!');
-                            router.push("/");
+                            setShowVictoryModal(true)
                         }
                         
                         // Verificar si la próxima pregunta es decisiva
@@ -137,13 +138,18 @@ const Match = () => {
                     )
                 ))}
             </header>
-            {!selectCategoryModal && (
+            {(!showVictoryModal && !selectCategoryModal) && (
                 <Roulette />
             )}
             <SelectedCategoryModal
                 isOpen={selectCategoryModal}
                 setSelectCategoryModal={setSelectCategoryModal}
             />
+            <VictoryModal
+                isOpen={showVictoryModal}
+                type='victory'
+            />
+         
         </section>
     );
 };
