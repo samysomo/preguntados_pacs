@@ -101,6 +101,11 @@ export default function Home() {
           <Button onClick={handleAddFriend} className="w-full mb-6 text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
             Añadir <span className="max-lg:hidden ml-1">Amigo</span>
           </Button>
+          <Link href="/searchPeople" className="w-full mb-6">
+            <Button className="w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
+              Buscar <span className="max-lg:hidden ml-1">Personas</span>
+            </Button>
+          </Link>
           <Link href="/ongoingMatches" className="w-full mb-6">
             <Button className="w-full text-lg bg-[#fc466b] hover:bg-[#ff77e9]">
               Partidas <span className="max-lg:hidden ml-1">en Curso</span>

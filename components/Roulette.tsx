@@ -65,12 +65,15 @@ const Roulette = () => {
   return (
     <>
       <div className="relative w-[400px] h-[400px] flex justify-center items-center">
-        <div 
-          className='absolute w-[60px] h-[60px] bg-white rounded-full z-10 flex justify-center items-center uppercase font-bold text-slate-600 tracking-widest border border-black-2 cursor-pointer select-none before:spinner-triangle'
-          onClick={rotateRoulette}
-        >
-          Spin
-        </div>
+        {!(selectedCategory === "corona") && 
+          <div 
+            className='absolute w-[60px] h-[60px] bg-white rounded-full z-10 flex justify-center items-center uppercase font-bold text-slate-600 tracking-widest border border-black-2 cursor-pointer select-none before:spinner-triangle'
+            onClick={rotateRoulette}
+          >
+            Spin
+          </div>
+        }
+        
         <div 
           ref={rouletteRef} 
           className='absolute top-0 left-0 w-full h-full bg-transparent rounded-full overflow-hidden custom-box'
